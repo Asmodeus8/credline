@@ -1,0 +1,57 @@
+spring:
+  application:
+    name: credline
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5434/credline}
+    username: ${DATABASE_USER:credline}
+    password: ${DATABASE_PASSWORD:credline}
+    hikari:
+      maximum-pool-size: 20
+  threads:
+    virtual:
+      enabled: true
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  shutdown: graceful
+  error:
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  api-docs:
+    path: /api/docs/openapi.json
+  swagger-ui:
+    path: /api/docs
+
+credline:
+  zone: Africa/Lagos
+  auth:
+    secret: ${AUTH_SECRET:dev-only-secret-change-me-0123456789abcdef}
+    ttl: 12h
+    secure-cookie: ${SECURE_COOKIE:false}
+  payments:
+    provider: ${PAYMENTS_PROVIDER:sandbox}
+    paystack-secret: ${PAYSTACK_SECRET_KEY:}
+    callback-url: ${PAYSTACK_CALLBACK_URL:http://localhost:3001/me}
+    public-url: ${PUBLIC_URL:http://localhost:3001}
+  collections:
+    cron: ${COLLECTIONS_CRON:0 30 6 * * *}
+    retry-days: [0, 1, 3, 7, 14, 21, 28]
+    grace-days: 3
+  policy:
+    maker-checker-threshold: 30000000
+    first-loan-cap: 20000000
+    offer-ttl: 72h
+  seed:
+    staff: ${SEED_STAFF:true}

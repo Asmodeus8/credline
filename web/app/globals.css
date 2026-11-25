@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --color-paper: #f4f2ec;
+  --color-sheet: #fbfaf7;
+  --color-ink: #141815;
+  --color-ink-2: #3b423d;
+  --color-mute: #6f776f;
+  --color-line: #e2dfd6;
+  --color-line-2: #d3cfc3;
+
+  --color-brand: #0f6b4f;
+  --color-brand-2: #0b5440;
+  --color-brand-soft: #dcefe4;
+  --color-lime: #c8f169;
+
+  --color-warn: #a86411;
+  --color-warn-soft: #fbedd5;
+  --color-bad: #b4321f;
+  --color-bad-soft: #f8e1dc;
+  --color-info: #2b5fb4;
+  --color-info-soft: #e1e9f8;
+
+  --shadow-card: 0 1px 0 rgb(20 24 21 / 0.04), 0 8px 24px -12px rgb(20 24 21 / 0.12);
+  --shadow-pop: 0 24px 60px -20px rgb(20 24 21 / 0.35);
+}
+
+html {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: var(--color-lime);
+  color: var(--color-ink);
+}
+
+input[type="range"] {
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--color-brand) var(--fill, 50%), var(--color-line) var(--fill, 50%));
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--color-sheet);
+  border: 2px solid var(--color-brand);
+  box-shadow: 0 2px 8px rgb(15 107 79 / 0.35);
+  cursor: grab;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--color-sheet);
+  border: 2px solid var(--color-brand);
+  cursor: grab;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise 0.35s ease both;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--color-line) 25%, #ece9e1 50%, var(--color-line) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: 8px;
+}
