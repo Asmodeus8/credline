@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "Transparent personal and business loans, decided in minutes.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en-NG" className={`${sans.variable} ${serif.variable} ${mono.variable} h-full`}>
       <body className="min-h-full">{children}</body>
