@@ -38,6 +38,8 @@ A digital lending platform for the Nigerian market. Borrowers apply online and g
 | ![Loan](docs/console-loan.png) | ![Collections](docs/console-collections.png) |
 | ![Reports](docs/console-reports.png) | ![Borrower file](docs/console-borrower.png) |
 | ![Interactive decision engine](docs/landing-engine.png) | ![Repayments](docs/console-repayments.png) |
+| ![Borrower directory](docs/console-borrowers.png) | ![Product pricing](docs/console-products.png) |
+| ![Review queue](docs/console-queue.png) | ![Borrower dashboard](docs/borrower-home.png) |
 
 ## The guarantees, and the tests that prove them
 
