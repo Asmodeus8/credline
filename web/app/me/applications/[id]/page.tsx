@@ -1,9 +1,11 @@
 "use client";
 
 import { ArrowRight, CheckCircle2, ChevronDown, CircleSlash, Clock3, CreditCard, Hourglass, Info } from "lucide-react";
+import { motion } from "motion/react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
+import { CountUp } from "@/components/landing/motion";
 import { Badge, Button, Card, Notice, Skeleton, cx } from "@/components/ui";
 import { ApiError, post, useApi } from "@/lib/api";
 import { APP_STATUS, date, dateTime, naira, pct, reason } from "@/lib/format";
@@ -112,7 +114,9 @@ function Offer({ app, quote, onChange }: { app: Application; quote: Quote; onCha
         <div className="relative overflow-hidden bg-ink px-8 pt-8 pb-9 text-sheet">
           <div className="pointer-events-none absolute -top-24 -right-20 size-72 rounded-full bg-brand/50 blur-3xl" />
           <p className="relative text-[12px] font-medium tracking-wide text-lime uppercase">{countered ? "Here’s what we can offer" : "You're approved"}</p>
-          <p className="num display relative mt-3 text-[64px] leading-none">{naira(quote.principal)}</p>
+          <p className="num display relative mt-3 text-[64px] leading-none">
+            <CountUp to={quote.principal} format={(v) => naira(v)} />
+          </p>
           <p className="relative mt-3 text-sheet/70">
             {app.productName} over {quote.tenorMonths} months · {naira(quote.installment)} a month
           </p>
@@ -128,14 +132,20 @@ function Offer({ app, quote, onChange }: { app: Application; quote: Quote; onCha
         <div className="px-8 py-6">
           <h2 className="text-[13px] font-semibold tracking-wide text-ink-2 uppercase">Key facts</h2>
           <dl className="mt-3 divide-y divide-line">
-            {facts.map(([k, v, hint]) => (
-              <div key={k} className="flex items-baseline justify-between gap-6 py-3">
+            {facts.map(([k, v, hint], i) => (
+              <motion.div
+                key={k}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 + i * 0.06, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                className="flex items-baseline justify-between gap-6 py-3"
+              >
                 <dt>
                   <span className="text-[15px]">{k}</span>
                   {hint && <span className="block text-[12px] text-mute">{hint}</span>}
                 </dt>
                 <dd className="num text-[16px] font-medium">{v}</dd>
-              </div>
+              </motion.div>
             ))}
           </dl>
           <button onClick={() => setOpen(!open)} className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-brand">

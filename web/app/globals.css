@@ -109,3 +109,38 @@ input[type="range"]::-moz-range-thumb {
   animation: shimmer 1.4s linear infinite;
   border-radius: 8px;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee {
+  animation: marquee 40s linear infinite;
+}
+
+input[type="range"].range-dark {
+  background: linear-gradient(to right, var(--color-lime) var(--fill, 50%), rgb(255 255 255 / 0.12) var(--fill, 50%));
+}
+
+input[type="range"].range-dark::-webkit-slider-thumb {
+  background: var(--color-ink);
+  border-color: var(--color-lime);
+  box-shadow: 0 0 0 6px rgb(200 241 105 / 0.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .marquee,
+  .rise,
+  .skeleton {
+    animation: none;
+  }
+}

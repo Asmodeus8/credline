@@ -13,6 +13,7 @@ export function cx(...v: (string | false | null | undefined)[]) {
 const buttonTone = {
   primary: "bg-ink text-sheet hover:bg-ink-2 shadow-[0_1px_0_rgb(255_255_255/0.08)_inset]",
   brand: "bg-brand text-white hover:bg-brand-2",
+  lime: "bg-lime text-ink hover:brightness-95 shadow-[0_10px_30px_-12px_rgb(200_241_105/0.7)]",
   secondary: "bg-sheet text-ink border border-line-2 hover:border-ink/40",
   ghost: "text-ink-2 hover:bg-ink/5",
   danger: "bg-bad text-white hover:brightness-110",
