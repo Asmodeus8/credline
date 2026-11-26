@@ -47,7 +47,7 @@ jobs:
         run: WEEKS=8 node scripts/seed.mjs
       - name: Pages render through the web proxy
         run: |
-          curl -fsS localhost:3001/ | grep -q "Credit that"
+          curl -fsS localhost:3001/ | grep -q "Apply in three minutes"
           curl -fsS localhost:3001/api/products | grep -q SALARY
       - if: failure()
         run: docker compose logs --tail 200
