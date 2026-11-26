@@ -6,28 +6,38 @@ A digital lending platform for the Nigerian market. Borrowers apply online and g
 
 **Spring Boot 4.2 on Java 25, PostgreSQL 18, Next.js 16.** Paystack handles card mandates, debits and payouts, with a full sandbox so the whole lifecycle runs locally.
 
+![Borrower site](docs/home.png)
+
 ![Portfolio overview](docs/console-overview.png)
 
 ## What it does
 
 **For borrowers**
+- An animated landing page: a live calculator in the hero, and an interactive decision engine where visitors move income, debt and bureau-score sliders and watch the score, outcome and factor points change. It also has an early-repayment savings chart and a FAQ, and it respects reduced-motion settings.
 - A live loan calculator: monthly repayment, fee, total cost and APR for any amount and tenor.
 - A three-step application. Submitting it creates the account and runs the credit decision straight away.
 - An offer page with a key facts statement and the full repayment schedule. Counter-offers say why the amount changed, and declines list every reason.
 - Card linking via a ₦50 authorisation, then an immediate payout to the borrower's bank account.
 - A loan page with the schedule and payments. Borrowers can pay the next instalment, everything overdue, or close the loan early and have future interest waived.
 
-**For staff**
+**For staff**, a console grouped into Lending, Money, Insights and Admin, with a Ctrl+K command palette that jumps to any borrower, loan or application, and CSV export on every list:
 - A portfolio overview: outstanding principal, PAR 30, on-time collection rate, approval funnel, decline reasons, weekly disbursements and bucket distribution.
 - A review queue showing the scorecard factor by factor, each policy rule, an affordability meter and the bureau report.
 - **Maker-checker:** approvals above ₦300,000 need a manager who did not propose them. The API, the service layer and a database `CHECK` all enforce this.
 - Loan files with the schedule, allocations, debit attempts, an event timeline, recorded bank transfers and write-off.
+- **Borrowers:** a searchable directory with standing segments, and a borrower file with exposure, every loan and application, the latest bureau pull and a full activity timeline.
+- **Disbursements and Repayments:** every payout with bank and status, and every receipt split into late fees, interest and principal, by channel.
+- **Reports:** month-by-month vintage analysis (ever 30+, ever 90+, write-offs), a matrix of how loans moved between overdue buckets, collections by due week, and product performance with PAR 30.
+- **Products:** pricing and limits that managers can edit, with every change audited and readable. New pricing applies only to new loans.
+- **Team:** roles and separation of duties, with each person's approvals, confirmations, transfers and write-offs counted from the audit trail.
 - A collections day view, plus a sandbox clock that runs end of day for every simulated day, so delinquency plays out in minutes.
 
 | Borrower offer and key facts | Staff decision file |
 |---|---|
 | ![Borrower offer](docs/borrower-offer.png) | ![Decision](docs/console-decision.png) |
 | ![Loan](docs/console-loan.png) | ![Collections](docs/console-collections.png) |
+| ![Reports](docs/console-reports.png) | ![Borrower file](docs/console-borrower.png) |
+| ![Interactive decision engine](docs/landing-engine.png) | ![Repayments](docs/console-repayments.png) |
 
 ## The guarantees, and the tests that prove them
 
@@ -40,10 +50,12 @@ A digital lending platform for the Nigerian market. Borrowers apply online and g
 | History cannot be rewritten | Triggers reject `UPDATE`/`DELETE` on decisions, repayments, allocations, loan events and audit | `IntegrityIT` |
 | Four eyes on large approvals | Service check plus `CHECK (checker_id <> maker_id)` | `OriginationIT` |
 | Officers cannot override affordability | Manual approvals re-checked against the applicant's repayment capacity | `OriginationIT` |
+| Only managers change pricing, and every change is recorded | Role check; before and after values written to the audit trail; no-op saves write nothing | `ConsoleIT` |
+| Staff screens never show a full BVN | Masked in SQL before leaving the database | `ConsoleIT` |
 | Borrowers see only their own data | JWT subject scoped queries | `LoanLifecycleIT` |
 | Webhooks are authentic and applied once | HMAC-SHA512 over the raw body, constant-time compare, event ids deduplicated | `PaystackWebhookTest` |
 
-`mvn verify` runs 38 tests against a real PostgreSQL in Testcontainers, including a loan driven from application to paid-off by card debits, and a declined card falling behind through the buckets.
+`mvn verify` runs 41 tests against a real PostgreSQL in Testcontainers, including a loan driven from application to paid-off by card debits, and a declined card falling behind through the buckets.
 
 ## Credit decisions
 

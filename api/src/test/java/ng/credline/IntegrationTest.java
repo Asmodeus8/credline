@@ -59,9 +59,13 @@ public abstract class IntegrationTest {
         }
 
         public Res post(String path, Object body) {
+            return call("POST", path, body);
+        }
+
+        public Res call(String method, String path, Object body) {
             return send(HttpRequest.newBuilder(uri(path))
                     .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(json.writeValueAsString(body == null ? Map.of() : body))));
+                    .method(method, HttpRequest.BodyPublishers.ofString(json.writeValueAsString(body == null ? Map.of() : body))));
         }
 
         private Res send(HttpRequest.Builder req) {

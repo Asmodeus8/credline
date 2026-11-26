@@ -3,7 +3,7 @@
 import { ArrowRight, Inbox } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { Kpi, PageTitle, useConsole } from "@/components/console";
+import { Delta, Kpi, PageTitle, useConsole } from "@/components/console";
 import { Card, CardHead, Meter, Skeleton, cx } from "@/components/ui";
 import { useApi } from "@/lib/api";
 import { BUCKETS, date, naira, nairaShort, ratio, reason } from "@/lib/format";
@@ -31,7 +31,14 @@ type Overview = {
   disbursements: { week: string; loans: number; amount: number }[];
   collections: { due: number; collected: number; installments: number; onTime: number };
   queue: { referred: number; pendingChecker: number; openOffers: number };
+  trends: { week: string; disbursed: number; collected: number; applications: number }[];
 };
+
+function halves(values: number[]) {
+  const last = values.slice(-4).reduce((a, b) => a + b, 0);
+  const prev = values.slice(-8, -4).reduce((a, b) => a + b, 0);
+  return { last, prev };
+}
 
 export default function OverviewPage() {
   const { tick } = useConsole();
@@ -53,12 +60,24 @@ export default function OverviewPage() {
 
   const p = o.portfolio;
   const queue = o.queue.referred + o.queue.pendingChecker;
+  const disbursed = o.trends.map((t) => t.disbursed);
+  const collected = o.trends.map((t) => t.collected);
+  const apps = o.trends.map((t) => t.applications);
+  const d = halves(disbursed);
+  const c = halves(collected);
+  const a = halves(apps);
   return (
     <div className="rise">
       <PageTitle title="Portfolio" meta={`As at close of ${date(o.today)}`} />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Kpi label="Outstanding principal" value={nairaShort(p.outstanding)} hint={`${p.activeLoans} active loans`} />
+        <Kpi
+          label="Disbursed, 4 weeks"
+          value={nairaShort(d.last)}
+          hint={`${nairaShort(p.outstanding)} outstanding across ${p.activeLoans} loans`}
+          spark={disbursed}
+          delta={<Delta now={d.last} before={d.prev} />}
+        />
         <Kpi
           label="PAR 30"
           value={<span className={cx(p.par30 / Math.max(p.outstanding, 1) > 0.05 && "text-bad")}>{ratio(p.par30, p.outstanding)}</span>}
@@ -66,15 +85,20 @@ export default function OverviewPage() {
           accent={BUCKETS.DPD_31_60.color}
         />
         <Kpi
-          label="Collected on time, 30 days"
-          value={ratio(o.collections.onTime, o.collections.installments, 0)}
-          hint={`${nairaShort(o.collections.collected)} of ${nairaShort(o.collections.due)} due`}
-          accent="#0f6b4f"
+          label="Collected, 4 weeks"
+          value={nairaShort(c.last)}
+          hint={`${ratio(o.collections.onTime, o.collections.installments, 0)} of instalments paid on time`}
+          accent="#2b5fb4"
+          spark={collected}
+          delta={<Delta now={c.last} before={c.prev} />}
         />
         <Kpi
-          label="Approval rate, 30 days"
-          value={ratio(o.funnel.offered, o.funnel.submitted, 0)}
-          hint={`${o.funnel.submitted} applications, avg score ${o.funnel.averageScore}`}
+          label="Applications, 4 weeks"
+          value={a.last}
+          hint={`${ratio(o.funnel.offered, o.funnel.submitted, 0)} approved · avg score ${o.funnel.averageScore}`}
+          accent="#141815"
+          spark={apps}
+          delta={<Delta now={a.last} before={a.prev} />}
         />
       </div>
 

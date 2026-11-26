@@ -82,6 +82,14 @@ class Overview {
                        count(*) filter (where status = 'APPROVED') as open_offers
                 from applications
                 """)).orElseThrow());
+        out.put("trends", rows.list(db.sql("""
+                select w.week::date as week,
+                       (select coalesce(sum(principal), 0) from loans where disbursed_on >= w.week and disbursed_on < w.week + interval '1 week') as disbursed,
+                       (select coalesce(sum(amount), 0) from repayments where received_on >= w.week and received_on < w.week + interval '1 week') as collected,
+                       (select count(*) from applications where created_at >= w.week and created_at < w.week + interval '1 week') as applications
+                from generate_series(date_trunc('week', ?::date) - interval '11 weeks', date_trunc('week', ?::date), interval '1 week') as w(week)
+                order by w.week
+                """).params(today, today)));
         out.put("lastRun", rows.one(db.sql("select * from business_days order by business_date desc limit 1")).orElse(null));
         return out;
     }
